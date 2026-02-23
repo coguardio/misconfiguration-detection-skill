@@ -1,10 +1,14 @@
 # CoGuard Security Scanning Skill for Claude Code
 
-A comprehensive skill that enables Claude Code to automatically scan your infrastructure configurations for security vulnerabilities and misconfigurations using [CoGuard](https://coguard.io), then interpret and help fix the findings.
+A comprehensive skill that enables Claude Code to automatically scan your infrastructure
+configurations for security vulnerabilities and misconfigurations using
+[CoGuard](https://coguard.io), then interpret and help fix the findings.
 
 ## What is This?
 
-This is a custom skill for [Claude Code](https://claude.com/claude-code) that brings infrastructure security scanning capabilities directly into your development workflow. When you invoke this skill, Claude will:
+This is a custom skill for [Claude Code](https://claude.com/claude-code) that brings
+infrastructure security scanning capabilities directly into your development workflow.
+When you invoke this skill, Claude will:
 
 1. ✅ Scan your project with CoGuard
 2. 🔍 Analyze and interpret security findings
@@ -45,7 +49,8 @@ claude code skill install ./coguard-skill
 ### Option 2: Manual Installation
 
 1. Download this repository
-2. Place the `skill.json` and `prompt.md` files in your Claude Code skills directory:
+2. Place the `skill.json` and `prompt.md` files in your Claude Code skills
+   directory:
    - **macOS/Linux**: `~/.claude-code/skills/coguard/`
    - **Windows**: `%USERPROFILE%\.claude-code\skills\coguard\`
 3. Restart Claude Code
@@ -127,7 +132,8 @@ CoGuard analyzes configurations for:
 - 📊 BitBucket Pipelines
 - 📡 OpenTelemetry Collector
 
-[See full list of supported technologies](https://github.com/coguardio/coguard-cli#supported-technologies)
+[See full list of supported technologies]
+(https://github.com/coguardio/coguard-cli#supported-technologies)
 
 ## Example Output
 
@@ -142,8 +148,8 @@ CoGuard analyzes configurations for:
 ### Critical Issues (Fix Immediately)
 
 1. **PostgreSQL Password Authentication Enabled** in `docker-compose.yml:15`
-   - **Problem**: PostgreSQL is configured to allow password authentication
-     without SSL/TLS encryption
+   - **Problem**: PostgreSQL is configured to allow password authentication without
+     SSL/TLS encryption
    - **Impact**: Database credentials can be intercepted in plain text
    - **Fix**: Enable SSL and use certificate-based authentication
 
@@ -219,6 +225,7 @@ Claude: [Generates formatted report of all findings]
 ## Integration with Development Workflow
 
 ### Pre-Commit Scanning
+
 Add CoGuard to your pre-commit workflow:
 
 ```bash
@@ -227,6 +234,7 @@ coguard folder scan . --fail-on-critical
 ```
 
 ### CI/CD Integration
+
 Generate pipeline configuration:
 
 ```bash
@@ -236,23 +244,32 @@ coguard pipeline github add .
 This creates a GitHub Action that scans on every PR.
 
 ### Regular Audits
-Use Claude Code with this skill for regular security reviews of your infrastructure.
+
+Use Claude Code with this skill for regular security reviews of your
+infrastructure.
 
 ## Troubleshooting
 
 ### "CoGuard not found"
+
 Install CoGuard CLI:
+
 ```bash
 pip3 install coguard-cli
 ```
 
 ### "Authentication required"
-On first scan, you'll be prompted to create a free CoGuard account. Follow the instructions in the terminal.
+
+On first scan, you'll be prompted to create a free CoGuard account. Follow the
+instructions in the terminal.
 
 ### "Permission denied" (Windows)
-Windows users need symbolic link permissions. Run PowerShell as Administrator or enable Developer Mode.
+
+Windows users need symbolic link permissions. Run PowerShell as Administrator or
+enable Developer Mode.
 
 ### Scan taking too long
+
 Cloud scans can take 2-5 minutes depending on infrastructure size. This is normal.
 
 ## Privacy & Security
@@ -266,7 +283,8 @@ Cloud scans can take 2-5 minutes depending on infrastructure size. This is norma
 
 We welcome contributions! Here's how you can help:
 
-1. **Report Issues**: Found a bug? [Open an issue](https://github.com/coguardio/coguard-skill/issues)
+1. **Report Issues**: Found a bug?
+   [Open an issue](https://github.com/coguardio/coguard-skill/issues)
 2. **Suggest Improvements**: Ideas for better interpretations? Share them!
 3. **Submit PRs**: Improve the skill's prompts or documentation
 4. **Share Examples**: Show us how you use this skill
@@ -275,10 +293,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Support
 
-- **Skill Issues**: [GitHub Issues](https://github.com/coguardio/coguard-skill/issues)
-- **CoGuard CLI Issues**: [CoGuard CLI Repo](https://github.com/coguardio/coguard-cli/issues)
+- **Skill Issues**:
+  [GitHub Issues](https://github.com/coguardio/coguard-skill/issues)
+- **CoGuard CLI Issues**:
+  [CoGuard CLI Repo](https://github.com/coguardio/coguard-cli/issues)
 - **CoGuard Support**: [Contact CoGuard](https://coguard.io/contact)
-- **Claude Code Help**: [Claude Code Documentation](https://claude.com/claude-code/docs)
+- **Claude Code Help**:
+  [Claude Code Documentation](https://claude.com/claude-code/docs)
 
 ## Resources
 
@@ -293,10 +314,13 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ## About CoGuard
 
-CoGuard is a comprehensive static analysis tool for IT infrastructure configurations. It helps teams find and fix misconfigurations and security vulnerabilities in IaC, containers, cloud settings, and applications.
+CoGuard is a comprehensive static analysis tool for IT infrastructure configurations.
+It helps teams find and fix misconfigurations and security vulnerabilities in IaC,
+containers, cloud settings, and applications.
 
 Learn more at [coguard.io](https://coguard.io)
 
 ---
 
-**Made with ❤️ by the CoGuard team to help developers build more secure infrastructure**
+**Made with ❤️ by the CoGuard team to help developers build more secure
+infrastructure**

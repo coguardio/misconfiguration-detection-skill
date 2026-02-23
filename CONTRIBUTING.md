@@ -1,6 +1,7 @@
 # Contributing to CoGuard Skill for Claude Code
 
-Thank you for your interest in contributing to the CoGuard skill! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to the CoGuard skill! This document
+provides guidelines for contributing to the project.
 
 ## How to Contribute
 
@@ -8,7 +9,8 @@ Thank you for your interest in contributing to the CoGuard skill! This document 
 
 If you find a bug or have a suggestion for improvement:
 
-1. Check if the issue already exists in [GitHub Issues](https://github.com/coguardio/coguard-skill/issues)
+1. Check if the issue already exists in [GitHub Issues]
+   (https://github.com/coguardio/coguard-skill/issues)
 2. If not, create a new issue with:
    - Clear, descriptive title
    - Detailed description of the problem or suggestion
@@ -21,13 +23,18 @@ If you find a bug or have a suggestion for improvement:
 The skill consists of two main files:
 
 #### 1. `skill.json`
+
 Metadata about the skill. Changes here might include:
+
 - Adding new command aliases
 - Updating version numbers
 - Improving the description
 
 #### 2. `prompt.md`
-The instructions that guide Claude's behavior. This is where most improvements happen:
+
+The instructions that guide Claude's behavior. This is where most improvements
+happen:
+
 - Clarifying scanning workflows
 - Adding better result interpretation logic
 - Improving remediation guidance
@@ -38,21 +45,25 @@ The instructions that guide Claude's behavior. This is where most improvements h
 Here are areas where contributions are especially welcome:
 
 #### Better Result Interpretation
+
 - More nuanced severity prioritization
 - Pattern recognition for common issues
 - Better grouping of related findings
 
 #### Enhanced Remediation
+
 - More detailed fix explanations
 - Code examples for common fixes
 - Links to relevant documentation
 
 #### Expanded Use Cases
+
 - Industry-specific scanning workflows
 - Compliance-focused interpretations (PCI-DSS, HIPAA, etc.)
 - Integration with other security tools
 
 #### Documentation
+
 - More usage examples
 - Video tutorials
 - Blog posts about using the skill
@@ -129,6 +140,7 @@ Before submitting a PR, test your changes with:
 ### Code Style
 
 #### For `prompt.md`
+
 - Use clear, imperative language
 - Break down complex workflows into numbered steps
 - Use markdown formatting consistently
@@ -136,11 +148,13 @@ Before submitting a PR, test your changes with:
 - Keep explanations concise but complete
 
 #### For `skill.json`
+
 - Follow JSON formatting standards
 - Use semantic versioning for version numbers
 - Keep descriptions under 100 characters
 
 #### For `README.md` and docs
+
 - Use clear headings and structure
 - Include practical examples
 - Keep language accessible to developers of all levels
@@ -188,8 +202,10 @@ If you have questions about contributing:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License, the same license as the project.
+By contributing, you agree that your contributions will be licensed under the MIT
+License, the same license as the project.
 
 ---
 
-Thank you for helping make infrastructure security more accessible to developers! 🛡️
+Thank you for helping make infrastructure security more accessible to
+developers! 🛡️
