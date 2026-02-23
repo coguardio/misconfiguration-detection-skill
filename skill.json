@@ -1,0 +1,14 @@
+{
+  "name": "coguard",
+  "version": "1.0.0",
+  "description": "Scan your infrastructure configurations for security vulnerabilities and misconfigurations using CoGuard",
+  "author": "CoGuard",
+  "license": "MIT",
+  "tags": ["security", "infrastructure", "devops", "scanning", "iac"],
+  "commands": [
+    {
+      "name": "coguard",
+      "description": "Scan project with CoGuard and interpret security findings"
+    }
+  ]
+}

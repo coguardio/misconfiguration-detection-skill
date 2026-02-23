@@ -1,0 +1,19 @@
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local development and testing
+test-project/
+example-scans/
+*.local
+
+# Temporary files
+*.tmp
+*.bak
