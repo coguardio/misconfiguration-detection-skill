@@ -4,6 +4,8 @@ A comprehensive skill that enables Claude Code to automatically scan your infras
 configurations for security vulnerabilities and misconfigurations using
 [CoGuard](https://coguard.io), then interpret and help fix the findings.
 
+> **Note**: For proper Claude skill compatibility, this repository directory should be named `coguard` (not `coguard_skill`) to match the skill name defined in SKILL.md. If you've cloned this repository, consider renaming the directory: `mv coguard_skill coguard`
+
 ## What is This?
 
 This is a custom skill for [Claude Code](https://claude.com/claude-code) that brings
@@ -36,30 +38,81 @@ When you invoke this skill, Claude will:
 
 ## Installation
 
-### Option 1: Install from GitHub (Recommended)
+### Option 1: Install from claude.ai (Recommended)
+
+1. Visit [claude.ai](https://claude.ai)
+2. Go to Settings → Skills
+3. Click "Upload Custom Skill"
+4. Upload the skill ZIP file (see "Creating the ZIP" below)
+
+### Option 2: Install via Claude Code CLI
 
 ```bash
 # Clone this repository
 git clone https://github.com/coguardio/coguard-skill.git
 
-# Install the skill in Claude Code
-claude code skill install ./coguard-skill
+# Navigate to the directory
+cd coguard-skill
+
+# Create a ZIP file for the skill
+zip -r coguard.zip coguard_skill/
+
+# Upload to claude.ai via Settings → Skills
 ```
 
-### Option 2: Manual Installation
+### Creating the ZIP File
 
-1. Download this repository
-2. Place the `skill.json` and `prompt.md` files in your Claude Code skills
-   directory:
-   - **macOS/Linux**: `~/.claude-code/skills/coguard/`
-   - **Windows**: `%USERPROFILE%\.claude-code\skills\coguard\`
-3. Restart Claude Code
+**IMPORTANT**: The directory inside the ZIP must be named `coguard` to match the skill name defined in SKILL.md.
 
-### Option 3: Direct URL Install (if supported)
+The skill must be packaged as a ZIP with the following structure:
+
+```
+coguard.zip
+└── coguard/
+    ├── SKILL.md
+    ├── README.md
+    ├── EXAMPLES.md
+    ├── CONTRIBUTING.md
+    └── LICENSE
+```
+
+#### Quick Method (Recommended)
+
+Use the provided packaging script:
 
 ```bash
-claude code skill install https://github.com/coguardio/coguard-skill
+# Clone the repository
+git clone https://github.com/coguardio/coguard-skill.git
+cd coguard-skill
+
+# Run the packaging script
+./package.sh
 ```
+
+This creates `coguard.zip` in the parent directory, ready for upload.
+
+#### Manual Method
+
+To create the properly structured ZIP file manually:
+
+```bash
+# Clone the repository
+git clone https://github.com/coguardio/coguard-skill.git
+cd coguard-skill
+
+# Create a temporary directory with the correct name
+mkdir -p ../coguard
+cp SKILL.md README.md EXAMPLES.md CONTRIBUTING.md LICENSE ../coguard/
+
+# Create the ZIP file from the parent directory
+cd ..
+zip -r coguard.zip coguard/
+
+# Clean up
+rm -rf coguard/
+```
+
+Then upload `coguard.zip` to claude.ai through Settings → Skills.
 
 ## Usage
 
