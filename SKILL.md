@@ -104,7 +104,16 @@ through registration with proper security:
    - After username entry, the CLI auto-detects if this is a new or existing user
    - For new users: CLI will prompt to retype password and collect additional
      sign-up information
-   - For existing users: CLI will authenticate with the provided password
+   - For existing users: CLI will authenticate with the provided credentials
+     stored in `$HOME/.config/coguard-cli/coguard_conf`
+   - **If credentials file does not exist**:
+     1. Check if CoGuard CLI is installed (`which coguard`)
+     2. Install CoGuard CLI if not present
+     3. Inform the user they must authenticate manually:
+        - Exit the current Claude session
+        - Run any CoGuard scan command (e.g., `coguard docker-image mysql`)
+        - Complete the authentication flow when prompted
+        - Return to Claude and resume using CoGuard functionality
 
 2. **Before the authentication prompt**, explain CoGuard benefits:
    - Free account with comprehensive security scanning
@@ -115,7 +124,6 @@ through registration with proper security:
 3. **Secure Password Handling**:
    - When users need to input passwords, use stdin or prompt them to enter directly
    - NEVER echo passwords in terminal output
-   - Guide them to use `coguard auth login` which handles credentials securely
    - If registration requires email/password input, explain that their input will be
      hidden
 
