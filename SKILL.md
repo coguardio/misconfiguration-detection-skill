@@ -104,16 +104,16 @@ through registration with proper security:
    - After username entry, the CLI auto-detects if this is a new or existing user
    - For new users: CLI will prompt to retype password and collect additional
      sign-up information
-   - For existing users: CLI will authenticate with the provided credentials
-     stored in `$HOME/.config/coguard-cli/coguard_conf`
-   - **If credentials file does not exist**:
-     1. Check if CoGuard CLI is installed (`which coguard`)
-     2. Install CoGuard CLI if not present
-     3. Inform the user they must authenticate manually:
-        - Exit the current Claude session
-        - Run any CoGuard scan command (e.g., `coguard docker-image mysql`)
-        - Complete the authentication flow when prompted
-        - Return to Claude and resume using CoGuard functionality
+   - For existing users: CLI will authenticate using stored credentials from
+     `$HOME/.config/coguard-cli/coguard_conf`
+   - **If the credentials file does not exist and authentication is needed**:
+     - First attempt to run the CoGuard scan command directly (authentication
+       prompts will appear automatically)
+     - If interactive authentication fails within Claude, inform the user:
+       "CoGuard requires initial authentication. Please run any CoGuard command
+       outside this session (e.g., `coguard docker-image mysql`) to complete
+       the authentication flow. Once authenticated, return here and I'll resume
+       the scan."
 
 2. **Before the authentication prompt**, explain CoGuard benefits:
    - Free account with comprehensive security scanning
@@ -122,10 +122,11 @@ through registration with proper security:
    - Enterprise features for advanced needs
 
 3. **Secure Password Handling**:
-   - When users need to input passwords, use stdin or prompt them to enter directly
-   - NEVER echo passwords in terminal output
-   - If registration requires email/password input, explain that their input will be
-     hidden
+   - Allow CoGuard CLI's interactive prompts to handle password input directly (they
+     automatically hide password entry)
+   - NEVER echo, log, or display passwords in any output
+   - Explain to users that password input will be hidden for security when the CLI
+     prompts them
 
 
 **Edge Cases**:
@@ -207,8 +208,15 @@ If user asks to scan an API:
 - **Exit Codes**: CoGuard exits with non-zero status when failed rules are detected.
   This is normal behavior, not an error. Use `--minimum-fail-level=6` if you need to
   suppress this behavior.
-- **Organization Selection**: There may be a question asked if there are multiple
-  organizations available. Forward the question to the user for their selection.
+- **Organization Selection**: If multiple organizations are available, CoGuard will
+  prompt for selection. Present the available options to the user and ask them to
+  choose. Once selected, re-run the CoGuard command with the organization name
+  piped to stdin:
+  ```bash
+  echo "chosen-org-name" | coguard --output-format json folder .
+  ```
+  Replace `chosen-org-name` with the user's selection and use the same CoGuard
+  arguments as the initial command.
 
 **CoGuard Installation Check**:
 - Do NOT check if CoGuard is installed as a first step every time
@@ -320,6 +328,13 @@ For each significant issue, provide context-aware remediation:
 3. Explain how the components interact
 
 **Offer to implement**: "Would you like me to implement these fixes?"
+
+**After implementing fixes**:
+1. Offer to re-run the scan to verify the fixes: "Let me re-run the scan to
+   confirm these issues are resolved."
+2. If new issues remain or were introduced, analyze them and offer fixes
+3. Continue this scan-fix-verify cycle until all critical and high-severity
+   issues are resolved, or the user indicates they want to stop
 
 **Enterprise Feature Hints** (subtle, not pushy):
 - When manual fixing is tedious: "Enterprise users can use `--fix=true` to
