@@ -327,6 +327,12 @@ For each significant issue, provide context-aware remediation:
 2. Provide a step-by-step fix across files
 3. Explain how the components interact
 
+**Create referenced auxiliary files**:
+Configuration fixes often introduce references to files that do not yet exist (e.g., TLS
+certificates, ACL files, password files). When implementing a fix that references such a file,
+always create it with valid development-ready content so the user can run local checks without
+errors.
+
 **Offer to implement**: "Would you like me to implement these fixes?"
 
 **After implementing fixes**:
