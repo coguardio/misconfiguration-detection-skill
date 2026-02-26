@@ -20,25 +20,18 @@ If you find a bug or have a suggestion for improvement:
 
 ### Improving the Skill
 
-The skill consists of two main files:
+The skill is defined in a single file:
 
-#### 1. `skill.json`
+#### `SKILL.md`
 
-Metadata about the skill. Changes here might include:
-
-- Adding new command aliases
-- Updating version numbers
-- Improving the description
-
-#### 2. `prompt.md`
-
-The instructions that guide Claude's behavior. This is where most improvements
-happen:
+The skill definition file consumed by Claude during execution. The frontmatter
+contains the skill name and description. The body contains all behavioral
+instructions. This is where most improvements happen:
 
 - Clarifying scanning workflows
 - Adding better result interpretation logic
 - Improving remediation guidance
-- Enhancing educational explanations
+- Tightening agent behavioral directives
 
 ### Improvement Ideas
 
@@ -82,17 +75,17 @@ Here are areas where contributions are especially welcome:
    ```
 
 3. **Make your changes**
-   - Edit `prompt.md`, `skill.json`, or documentation
+   - Edit `SKILL.md` or documentation files
    - Test your changes thoroughly
    - Ensure markdown formatting is correct
 
 4. **Test the skill**
    ```bash
-   # Install your modified version
-   claude code skill install .
+   # Package the skill
+   ./package.sh
 
-   # Test in various scenarios
-   /coguard
+   # Upload coguard.zip to claude.ai via Settings → Skills
+   # Then test by running /coguard in a project directory
    ```
 
 5. **Commit your changes**
@@ -139,19 +132,14 @@ Before submitting a PR, test your changes with:
 
 ### Code Style
 
-#### For `prompt.md`
+#### For `SKILL.md`
 
-- Use clear, imperative language
-- Break down complex workflows into numbered steps
-- Use markdown formatting consistently
+- Use direct imperatives, not passive or suggestive language
+- Break down workflows into numbered steps
+- Use markdown tables for structured data
+- Keep lines under 100 characters
+- Do not duplicate information across sections
 - Include code examples with proper syntax highlighting
-- Keep explanations concise but complete
-
-#### For `skill.json`
-
-- Follow JSON formatting standards
-- Use semantic versioning for version numbers
-- Keep descriptions under 100 characters
 
 #### For `README.md` and docs
 

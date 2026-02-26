@@ -5,14 +5,9 @@ on:
     # Run weekly on Mondays at 9 AM UTC
     - cron: '0 9 * * 1'
   workflow_dispatch:  # Allow manual triggers
-  pull_request:
-    paths:
-      - '**.md'
-      - 'skill.json'
 
 permissions:
   contents: read
-  pull-requests: write
   issues: write
 
 jobs:
@@ -36,29 +31,33 @@ jobs:
           echo "version=$LATEST" >> $GITHUB_OUTPUT
           echo "Latest CoGuard version: $LATEST"
 
-      - name: Check version in codebase
-        run: |
-          LATEST="${{ steps.latest_version.outputs.version }}"
-          echo "Checking for version $LATEST in codebase..."
-
-          # Search for version in all files
-          if ! grep -r "$LATEST" --include="*.md" --include="*.json" .; then
-            echo "::error::Latest CoGuard version $LATEST not found in codebase!"
-            echo "Please update documentation to reference the latest version."
-            exit 1
-          fi
-
-          echo "✓ Latest version $LATEST found in codebase"
-
-      - name: Comment on PR (if applicable)
-        if: failure() && github.event_name == 'pull_request'
+      - name: Create issue if new version detected
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const latest = '${{ steps.latest_version.outputs.version }}';
+            if (!latest) {
+              console.log('Could not determine latest version, skipping.');
+              return;
+            }
+
+            const issues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '⚠️ The codebase does not reference the latest CoGuard version. ' +
-                    'Please update documentation with version ${{ steps.latest_version.outputs.version }}'
-            })
+              labels: 'version-update',
+              state: 'open'
+            });
+
+            const existing = issues.data.find(i => i.title.includes(latest));
+            if (!existing) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `CoGuard CLI ${latest} released — review docs`,
+                body: `A new version of coguard-cli (\`${latest}\`) is available on PyPI.\n\nReview documentation and examples for accuracy.`,
+                labels: ['version-update']
+              });
+              console.log(`Created issue for version ${latest}`);
+            } else {
+              console.log(`Issue already exists for version ${latest}`);
+            }

@@ -17,3 +17,12 @@ example-scans/
 # Temporary files
 *.tmp
 *.bak
+
+# CoGuard scan output
+result.json
+
+# Package output
+*.zip
+
+# Working notes
+feedback_text.md

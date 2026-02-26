@@ -23,14 +23,9 @@ check for security issues.
 ```
 You: /coguard
 
-Claude: I'll scan your project for security issues. Let me first check if CoGuard
-is installed...
+Claude: I'll scan your project for security issues...
 
-[Runs: coguard --version]
-
-CoGuard is installed (v0.3.10). Now scanning your project...
-
-[Runs: coguard folder scan .]
+[Runs: coguard --output-format json folder .]
 
 ## CoGuard Security Scan Results
 
@@ -43,12 +38,12 @@ findings.
 - 2 high-priority issues found
 - 9 medium/low issues found
 
-### Critical Issues (Fix Immediately)
+### Critical Issues (Severity 5) — Fix Immediately
 
-1. **Docker Container Running as Root** in `Dockerfile:8`
+1. **Docker Container Running as Root** (CoGuard ID: CG-0001) in `Dockerfile:8`
    - **Problem**: Container runs with root privileges (no USER directive)
-   - **Impact**: If compromised, attacker has root access to container and
-     potentially the host system
+   - **Security Impact**: If compromised, attacker has root access to container
+     and potentially the host system
    - **Fix**: Add a non-root user before CMD instruction:
 
      ```dockerfile
@@ -56,21 +51,21 @@ findings.
      USER appuser
      ```
 
-### High Priority Issues
+### High Priority Issues (Severity 4)
 
-2. **Missing Security Headers** in `nginx/nginx.conf`
+2. **Missing Security Headers** (CoGuard ID: CG-0002) in `nginx/nginx.conf:1`
    - **Problem**: No X-Frame-Options, X-Content-Type-Options, or CSP headers
    - **Impact**: Vulnerable to clickjacking and XSS attacks
    - **Fix**: Add security headers block
 
-3. **Weak SSL Configuration** in `nginx/ssl.conf:5`
+3. **Weak SSL Configuration** (CoGuard ID: CG-0003) in `nginx/ssl.conf:5`
    - **Problem**: TLSv1.0 and TLSv1.1 enabled
    - **Impact**: Vulnerable to known TLS vulnerabilities (BEAST, POODLE)
    - **Fix**: Use only TLSv1.2 and TLSv1.3
 
-### Medium Priority Issues
+### Moderate Issues (Severity 3)
 
-4. **NGINX Version Disclosure** in `nginx/nginx.conf:12`
+4. **NGINX Version Disclosure** (CoGuard ID: CG-0004) in `nginx/nginx.conf:12`
    - **Problem**: Server version exposed in HTTP headers and error pages
    - **Impact**: Provides information that could aid reconnaissance
    - **Fix**: Add to http block:
@@ -116,7 +111,7 @@ You: /coguard scan the postgres:14 image I'm planning to use
 
 Claude: I'll scan the postgres:14 Docker image for security issues...
 
-[Runs: coguard docker-image scan postgres:14]
+[Runs: coguard --output-format json docker-image postgres:14]
 
 ## PostgreSQL 14 Docker Image Security Analysis
 
@@ -126,9 +121,9 @@ Claude: I'll scan the postgres:14 Docker image for security issues...
 - 2 high-priority configuration recommendations
 - 5 medium-priority best practices
 
-### High Priority Recommendations
+### High Priority Recommendations (Severity 4)
 
-1. **Default PostgreSQL Configuration** in
+1. **Default PostgreSQL Configuration** (CoGuard ID: CG-0010) in
    `/var/lib/postgresql/data/postgresql.conf`
    - **Issue**: Image uses default configuration optimized for compatibility, not
      security
@@ -259,7 +254,7 @@ Claude: I'll scan your Kubernetes configurations. Note that CoGuard performs
 recursive scans, which means it will also analyze any Docker images referenced in
 your manifests...
 
-[Runs: coguard folder scan .]
+[Runs: coguard --output-format json folder .]
 
 ## Kubernetes Deployment Security Scan
 
@@ -441,7 +436,7 @@ You: /coguard scan my AWS infrastructure
 Claude: I'll extract and scan your current AWS configuration. This may take 2-3
 minutes...
 
-[Runs: coguard cloud scan aws]
+[Runs: coguard --output-format json cloud aws]
 
 ## AWS Infrastructure Security Audit
 
@@ -559,7 +554,7 @@ http {
 
 Re-running CoGuard scan to confirm...
 
-[Runs: coguard folder scan .]
+[Runs: coguard --output-format json folder .]
 
 ✓ Scan complete!
 
@@ -580,7 +575,7 @@ You: /coguard scan and fix all issues automatically
 
 Claude: I'll check if you have access to the enterprise fix feature...
 
-[Runs: coguard folder scan . --fix=true]
+[Runs: coguard --output-format json folder . --fix=true]
 
 ## Auto-Fix Results
 
@@ -644,7 +639,7 @@ password_encryption = scram-sha-256
 
 Running final scan to confirm all issues resolved...
 
-[Runs: coguard folder scan .]
+[Runs: coguard --output-format json folder .]
 
 ✓ All issues resolved! Your configuration is now secure.
 
@@ -870,7 +865,7 @@ jobs:
         env:
           COGUARD_API_KEY: ${{ secrets.COGUARD_API_KEY }}
         run: |
-          coguard folder scan . --output json > scan-results.json
+          coguard --output-format json folder . > scan-results.json
 
       - name: Check for Critical Issues
         run: |

@@ -4,8 +4,6 @@ A comprehensive skill that enables Claude Code to automatically scan your infras
 configurations for security vulnerabilities and misconfigurations using
 [CoGuard](https://coguard.io), then interpret and help fix the findings.
 
-> **Note**: For proper Claude skill compatibility, this repository directory should be named `coguard` (not `coguard_skill`) to match the skill name defined in SKILL.md. If you've cloned this repository, consider renaming the directory: `mv coguard_skill coguard`
-
 ## What is This?
 
 This is a custom skill for [Claude Code](https://claude.com/claude-code) that brings
@@ -45,26 +43,20 @@ When you invoke this skill, Claude will:
 3. Click "Upload Custom Skill"
 4. Upload the skill ZIP file (see "Creating the ZIP" below)
 
-### Option 2: Install via Claude Code CLI
+### Option 2: Install via CLI
 
 ```bash
 # Clone this repository
 git clone https://github.com/coguardio/coguard-skill.git
-
-# Navigate to the directory
 cd coguard-skill
 
-# Create a ZIP file for the skill
-zip -r coguard.zip coguard_skill/
+# Package the skill (creates coguard.zip in parent directory)
+./package.sh
 
-# Upload to claude.ai via Settings → Skills
+# Upload coguard.zip to claude.ai via Settings → Skills
 ```
 
-### Creating the ZIP File
-
-**IMPORTANT**: The directory inside the ZIP must be named `coguard` to match the skill name defined in SKILL.md.
-
-The skill must be packaged as a ZIP with the following structure:
+The packaging script creates a ZIP with the required structure:
 
 ```
 coguard.zip
@@ -75,44 +67,6 @@ coguard.zip
     ├── CONTRIBUTING.md
     └── LICENSE
 ```
-
-#### Quick Method (Recommended)
-
-Use the provided packaging script:
-
-```bash
-# Clone the repository
-git clone https://github.com/coguardio/coguard-skill.git
-cd coguard-skill
-
-# Run the packaging script
-./package.sh
-```
-
-This creates `coguard.zip` in the parent directory, ready for upload.
-
-#### Manual Method
-
-To create the properly structured ZIP file manually:
-
-```bash
-# Clone the repository
-git clone https://github.com/coguardio/coguard-skill.git
-cd coguard-skill
-
-# Create a temporary directory with the correct name
-mkdir -p ../coguard
-cp SKILL.md README.md EXAMPLES.md CONTRIBUTING.md LICENSE ../coguard/
-
-# Create the ZIP file from the parent directory
-cd ..
-zip -r coguard.zip coguard/
-
-# Clean up
-rm -rf coguard/
-```
-
-Then upload `coguard.zip` to claude.ai through Settings → Skills.
 
 ## Usage
 
@@ -282,19 +236,14 @@ Claude: [Generates formatted report of all findings]
 Add CoGuard to your pre-commit workflow:
 
 ```bash
-# In your project
-coguard folder scan . --fail-on-critical
+coguard --output-format json folder .
 ```
 
 ### CI/CD Integration
 
-Generate pipeline configuration:
-
-```bash
-coguard pipeline github add .
-```
-
-This creates a GitHub Action that scans on every PR.
+Add CoGuard to your CI pipeline using the
+[CoGuard GitHub Action](https://github.com/coguardio/coguard-scan-action)
+or by running `coguard --output-format json folder .` in your pipeline script.
 
 ### Regular Audits
 
