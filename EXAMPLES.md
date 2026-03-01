@@ -23,7 +23,7 @@ check for security issues.
 ```
 You: /coguard
 
-Claude: I'll scan your project for security issues...
+Agent: I'll scan your project for security issues...
 
 [Runs: coguard --output-format json folder .]
 
@@ -40,7 +40,7 @@ findings.
 
 ### Critical Issues (Severity 5) — Fix Immediately
 
-1. **Docker Container Running as Root** (CoGuard ID: CG-0001) in `Dockerfile:8`
+1. **Docker Container Running as Root**in `Dockerfile:8`
    - **Problem**: Container runs with root privileges (no USER directive)
    - **Security Impact**: If compromised, attacker has root access to container
      and potentially the host system
@@ -53,19 +53,19 @@ findings.
 
 ### High Priority Issues (Severity 4)
 
-2. **Missing Security Headers** (CoGuard ID: CG-0002) in `nginx/nginx.conf:1`
+2. **Missing Security Headers**in `nginx/nginx.conf:1`
    - **Problem**: No X-Frame-Options, X-Content-Type-Options, or CSP headers
    - **Impact**: Vulnerable to clickjacking and XSS attacks
    - **Fix**: Add security headers block
 
-3. **Weak SSL Configuration** (CoGuard ID: CG-0003) in `nginx/ssl.conf:5`
+3. **Weak SSL Configuration**in `nginx/ssl.conf:5`
    - **Problem**: TLSv1.0 and TLSv1.1 enabled
    - **Impact**: Vulnerable to known TLS vulnerabilities (BEAST, POODLE)
    - **Fix**: Use only TLSv1.2 and TLSv1.3
 
 ### Moderate Issues (Severity 3)
 
-4. **NGINX Version Disclosure** (CoGuard ID: CG-0004) in `nginx/nginx.conf:12`
+4. **NGINX Version Disclosure**in `nginx/nginx.conf:12`
    - **Problem**: Server version exposed in HTTP headers and error pages
    - **Impact**: Provides information that could aid reconnaissance
    - **Fix**: Add to http block:
@@ -82,7 +82,7 @@ Would you like me to fix these issues?
 ```
 You: I'm about to deploy to production. Can you do a quick security scan?
 
-Claude: Absolutely, let me run a comprehensive security scan before your
+Agent: Absolutely, let me run a comprehensive security scan before your
 deployment...
 
 [Runs scan and analyzes]
@@ -109,7 +109,7 @@ these findings?
 ```
 You: /coguard scan the postgres:14 image I'm planning to use
 
-Claude: I'll scan the postgres:14 Docker image for security issues...
+Agent: I'll scan the postgres:14 Docker image for security issues...
 
 [Runs: coguard --output-format json docker-image postgres:14]
 
@@ -123,7 +123,7 @@ Claude: I'll scan the postgres:14 Docker image for security issues...
 
 ### High Priority Recommendations (Severity 4)
 
-1. **Default PostgreSQL Configuration** (CoGuard ID: CG-0010) in
+1. **Default PostgreSQL Configuration**in
    `/var/lib/postgresql/data/postgresql.conf`
    - **Issue**: Image uses default configuration optimized for compatibility, not
      security
@@ -168,7 +168,7 @@ Would you like me to generate a secure postgresql.conf file for you?
 You: The postgres image doesn't support all the security configs I need via
 environment variables
 
-Claude: Good observation! When a Docker image doesn't support environment variables
+Agent: Good observation! When a Docker image doesn't support environment variables
 for all settings, the best approach is to create a custom image derived from the
 official one. Let me show you how...
 
@@ -250,7 +250,7 @@ This pattern works for any Docker image - NGINX, Redis, MongoDB, etc.
 ```
 You: /coguard scan my Kubernetes deployment
 
-Claude: I'll scan your Kubernetes configurations. Note that CoGuard performs
+Agent: I'll scan your Kubernetes configurations. Note that CoGuard performs
 recursive scans, which means it will also analyze any Docker images referenced in
 your manifests...
 
@@ -370,7 +370,7 @@ well?
 ```
 You: /coguard review my Terraform configs for AWS
 
-Claude: I'll analyze your Terraform configurations for AWS security best
+Agent: I'll analyze your Terraform configurations for AWS security best
 practices...
 
 [Runs scan focused on .tf files]
@@ -433,7 +433,7 @@ Should I go through each of these and explain the fixes in detail?
 ```
 You: /coguard scan my AWS infrastructure
 
-Claude: I'll extract and scan your current AWS configuration. This may take 2-3
+Agent: I'll extract and scan your current AWS configuration. This may take 2-3
 minutes...
 
 [Runs: coguard --output-format json cloud aws]
@@ -498,7 +498,7 @@ This is a comprehensive report. Would you like me to:
 ```
 You: /coguard scan and fix all critical issues
 
-Claude: I'll scan your project and fix critical security issues...
+Agent: I'll scan your project and fix critical security issues...
 
 [Runs scan]
 
@@ -573,7 +573,7 @@ Would you like me to address the high-priority issues as well?
 ```
 You: /coguard scan and fix all issues automatically
 
-Claude: I'll check if you have access to the enterprise fix feature...
+Agent: I'll check if you have access to the enterprise fix feature...
 
 [Runs: coguard --output-format json folder . --fix=true]
 
@@ -659,7 +659,7 @@ addressed.
 You: /coguard I want to learn about securing my PostgreSQL database. Can you scan
 it and explain?
 
-Claude: Great question! Let me scan your PostgreSQL configuration and walk you
+Agent: Great question! Let me scan your PostgreSQL configuration and walk you
 through security best practices...
 
 [Runs scan]
@@ -739,14 +739,14 @@ Want me to generate a secure postgresql.conf with all these settings?
 ```
 You: /coguard create a security report I can share with my team
 
-Claude: I'll generate a comprehensive security report suitable for team review...
+Agent: I'll generate a comprehensive security report suitable for team review...
 
 [Runs scan and formats results]
 
 # Infrastructure Security Report
 **Generated**: 2024-02-23
 **Project**: MyApp Platform
-**Scanned by**: CoGuard CLI via Claude Code
+**Scanned by**: CoGuard CLI via coding agent
 
 ## Executive Summary
 
@@ -827,7 +827,7 @@ I've created a detailed report. Would you like me to also:
 ```
 You: /coguard set up continuous security scanning in CI/CD
 
-Claude: I'll help you integrate CoGuard into your CI/CD pipeline...
+Agent: I'll help you integrate CoGuard into your CI/CD pipeline...
 
 First, let me scan your current setup and then generate the pipeline
 configuration...
@@ -902,7 +902,7 @@ Would you like me to create similar configs for other CI systems?
 ```
 You: We use JFrog Artifactory. Can we integrate CoGuard scan results?
 
-Claude: Yes! CoGuard integrates with JFrog Evidence to attach security scan
+Agent: Yes! CoGuard integrates with JFrog Evidence to attach security scan
 results as evidence to your artifacts. This requires CoGuard Enterprise and JFrog
 Cloud Enterprise+ subscriptions.
 
@@ -1001,7 +1001,7 @@ You can view the evidence in your JFrog platform for compliance tracking!
 ```
 You: We use Coverity for static analysis. Can CoGuard integrate with it?
 
-Claude: Absolutely! CoGuard can integrate configuration security findings into
+Agent: Absolutely! CoGuard can integrate configuration security findings into
 your Coverity reports. This requires CoGuard Enterprise and a valid Coverity
 license.
 

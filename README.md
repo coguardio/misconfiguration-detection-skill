@@ -1,32 +1,34 @@
-# CoGuard Security Scanning Skill for Claude Code
+# CoGuard Misconfiguration Detection Skill
 
-A comprehensive skill that enables Claude Code to automatically scan your infrastructure
-configurations for security vulnerabilities and misconfigurations using
-[CoGuard](https://coguard.io), then interpret and help fix the findings.
+A comprehensive skill that enables AI coding agents to automatically scan your
+infrastructure configurations for security vulnerabilities and misconfigurations
+using [CoGuard](https://coguard.io), then interpret and help fix the findings.
 
 ## What is This?
 
-This is a custom skill for [Claude Code](https://claude.com/claude-code) that brings
-infrastructure security scanning capabilities directly into your development workflow.
-When you invoke this skill, Claude will:
+This is a custom skill for AI coding agents (such as
+[Claude Code](https://claude.com/claude-code), Cursor, Windsurf, and others) that
+brings infrastructure security scanning capabilities directly into your development
+workflow. When you invoke this skill, the agent will:
 
-1. ✅ Scan your project with CoGuard
-2. 🔍 Analyze and interpret security findings
-3. 📊 Prioritize issues by severity and impact
-4. 🛠️ Suggest concrete fixes with explanations
-5. ⚡ Optionally implement the fixes for you
+1. Scan your project with CoGuard
+2. Analyze and interpret security findings
+3. Prioritize issues by severity and impact
+4. Suggest concrete fixes with explanations
+5. Optionally implement the fixes for you
 
 ## Why Use This Skill?
 
 - **Shift Security Left**: Catch configuration issues before they reach production
 - **Learn as You Go**: Understand *why* certain configurations are insecure
-- **Save Time**: Let Claude interpret complex security reports and suggest fixes
+- **Save Time**: Let your coding agent interpret complex security reports and suggest fixes
 - **Comprehensive Coverage**: Scan Docker images, IaC files, cloud configs, and more
 - **Actionable Results**: Get specific, implementable fixes, not just warnings
 
 ## Prerequisites
 
-1. **Claude Code**: Install from [claude.com/claude-code](https://claude.com/claude-code)
+1. **A coding agent that supports custom skills**: e.g.,
+   [Claude Code](https://claude.com/claude-code), Cursor, Windsurf, or similar
 2. **CoGuard CLI**: Install via pip
    ```bash
    pip3 install coguard-cli
@@ -82,7 +84,7 @@ Once installed, invoke the skill in any project directory:
 
 ```
 You: /coguard
-Claude: I'll scan your project for security issues...
+Agent: I'll scan your project for security issues...
 [Runs scan, analyzes results, presents findings]
 ```
 
@@ -90,7 +92,7 @@ Claude: I'll scan your project for security issues...
 
 ```
 You: /coguard and fix any critical issues
-Claude: I'll scan and fix critical security issues...
+Agent: I'll scan and fix critical security issues...
 [Scans, identifies problems, applies fixes, verifies]
 ```
 
@@ -98,7 +100,7 @@ Claude: I'll scan and fix critical security issues...
 
 ```
 You: /coguard scan the nginx:latest Docker image
-Claude: I'll scan the nginx:latest image...
+Agent: I'll scan the nginx:latest image...
 [Analyzes Docker image configuration]
 ```
 
@@ -106,7 +108,7 @@ Claude: I'll scan the nginx:latest image...
 
 ```
 You: /coguard scan my AWS infrastructure
-Claude: I'll scan your AWS configuration...
+Agent: I'll scan your AWS configuration...
 [Extracts and analyzes AWS settings]
 ```
 
@@ -115,29 +117,29 @@ Claude: I'll scan your AWS configuration...
 CoGuard analyzes configurations for:
 
 ### Infrastructure as Code
-- 🏗️ Terraform
-- ☸️ Kubernetes & Helm
-- 📋 CloudFormation
-- 📦 Ansible
-- 🐳 Docker & Dockerfiles
+- Terraform
+- Kubernetes & Helm
+- CloudFormation
+- Ansible
+- Docker & Dockerfiles
 
 ### Applications & Databases
-- 🌐 NGINX, Apache, Tomcat
-- 🗄️ PostgreSQL, MySQL, MongoDB
-- 📊 Elasticsearch, Redis, Cassandra
-- 📮 Apache Kafka
-- 🔐 Kerberos
+- NGINX, Apache, Tomcat
+- PostgreSQL, MySQL, MongoDB
+- Elasticsearch, Redis, Cassandra
+- Apache Kafka
+- Kerberos
 
 ### Cloud Platforms
-- ☁️ AWS
-- 🔵 Azure
-- 🌩️ Google Cloud Platform
+- AWS
+- Azure
+- Google Cloud Platform
 
 ### CI/CD & DevOps
-- 🔧 Jenkins
-- 🚀 GitHub Actions
-- 📊 BitBucket Pipelines
-- 📡 OpenTelemetry Collector
+- Jenkins
+- GitHub Actions
+- BitBucket Pipelines
+- OpenTelemetry Collector
 
 [See full list of supported technologies]
 (https://github.com/coguardio/coguard-cli#supported-technologies)
@@ -205,28 +207,28 @@ Would you like me to fix any of these issues?
 
 ```
 You: /coguard scan only Terraform files
-Claude: [Scans only .tf files in the project]
+Agent: [Scans only .tf files in the project]
 ```
 
 ### Focus on Specific Severity
 
 ```
 You: /coguard show me only critical and high severity issues
-Claude: [Filters and displays top priority findings]
+Agent: [Filters and displays top priority findings]
 ```
 
 ### Explain a Specific Finding
 
 ```
 You: /coguard explain why server tokens should be disabled
-Claude: [Provides detailed explanation of the security principle]
+Agent: [Provides detailed explanation of the security principle]
 ```
 
 ### Generate Security Report
 
 ```
 You: /coguard create a security report for my team
-Claude: [Generates formatted report of all findings]
+Agent: [Generates formatted report of all findings]
 ```
 
 ## Integration with Development Workflow
@@ -243,11 +245,17 @@ coguard --output-format json folder .
 
 Add CoGuard to your CI pipeline using the
 [CoGuard GitHub Action](https://github.com/coguardio/coguard-scan-action)
-or by running `coguard --output-format json folder .` in your pipeline script.
+or by running `coguard folder .` in your pipeline script.
+
+If you need to process scan results in subsequent pipeline steps, use
+`coguard --output-format json folder .` which writes results to a
+`result.json` file (instead of printing to stdout). You can then parse this
+file in later pipeline stages. If you don't need programmatic access to the
+results, omit the `--output-format json` flag.
 
 ### Regular Audits
 
-Use Claude Code with this skill for regular security reviews of your
+Use your coding agent with this skill for regular security reviews of your
 infrastructure.
 
 ## Troubleshooting
@@ -272,7 +280,7 @@ enable Developer Mode.
 
 ### Scan taking too long
 
-Cloud scans can take 2-5 minutes depending on infrastructure size. This is normal.
+Cloud scans can take 15-20 minutes depending on infrastructure size. This is normal.
 
 ## Privacy & Security
 
@@ -302,6 +310,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 - **CoGuard Support**: [Contact CoGuard](https://coguard.io/contact)
 - **Claude Code Help**:
   [Claude Code Documentation](https://claude.com/claude-code/docs)
+- **General**: This skill works with any coding agent that supports custom skills
 
 ## Resources
 
