@@ -245,6 +245,24 @@ If the user asks to scan an API:
   ```
   Replace `chosen-org-name` with the user's selection; use the same CoGuard arguments as the
   initial command.
+- **Unresolvable Docker image references**: During folder scans, CoGuard may print error
+  messages indicating it could not download a Docker image. This typically happens when image
+  references in Kubernetes manifests, docker-compose files, Helm charts, or other IaC files
+  contain environment variables or templating placeholders (e.g.,
+  `${REGISTRY}/my-app:${VERSION}`, `{{ .Values.image.repository }}`). When this occurs:
+  1. Collect the image references that failed from the scan output.
+  2. Present them to the user and offer to help resolve them:
+     "CoGuard couldn't pull the following Docker images because they contain
+     unresolved variables:
+     - `${REGISTRY}/my-app:${VERSION}`
+     - `{{ .Values.image.tag }}`
+
+     Would you like to:
+     a) **Provide the actual values** so I can scan these images separately
+     b) **Skip these images** and continue with the current results"
+  3. If the user provides values, run individual `coguard --output-format json docker-image
+     <resolved-image-name>` scans for each resolved image.
+  4. Merge those additional findings into the overall result presentation.
 
 **CoGuard installation**:
 - Do NOT check if CoGuard is installed as a first step.
