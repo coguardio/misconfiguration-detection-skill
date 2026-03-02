@@ -38,13 +38,22 @@ workflow. When you invoke this skill, the agent will:
 
 ## Installation
 
-Claude Code loads skills from specific directories on your filesystem. Clone this
-repository into one of the supported skill locations to install it.
+### Quick Start
+
+Run this one-liner to install the skill for all your projects:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.sh | bash
+```
+
+That's it — restart Claude Code and type `/misconfiguration-detection`.
+
+---
 
 For full details on how skills work, see the
 [Claude Code Skills Documentation](https://code.claude.com/docs/en/skills).
 
-### Option 1: Personal Skill (Recommended)
+### Option 1: Personal Skill (git clone)
 
 Personal skills are available across all your projects:
 
@@ -53,7 +62,7 @@ git clone https://github.com/coguardio/misconfiguration-detection-skill.git \
   ~/.claude/skills/misconfiguration-detection
 ```
 
-### Option 2: Project Skill
+### Option 2: Project Skill (git clone)
 
 Project skills apply only to a single project and can be committed to version
 control:
@@ -64,17 +73,16 @@ git clone https://github.com/coguardio/misconfiguration-detection-skill.git \
   .claude/skills/misconfiguration-detection
 ```
 
-### Option 3: Manual Download
+### Option 3: Download from Releases
 
-If you prefer not to use `git clone`, download and extract the files manually:
+Download `misconfiguration-detection.zip` from the
+[latest release](https://github.com/coguardio/misconfiguration-detection-skill/releases/latest)
+and extract it into your skills directory:
 
 ```bash
-mkdir -p ~/.claude/skills/misconfiguration-detection
-# Copy SKILL.md and supporting files (EXAMPLES.md, etc.) into the directory
+mkdir -p ~/.claude/skills
+unzip misconfiguration-detection.zip -d ~/.claude/skills/
 ```
-
-The required file is `SKILL.md`. Supporting files like `EXAMPLES.md` provide
-additional context to Claude when needed.
 
 ### Verify Installation
 
