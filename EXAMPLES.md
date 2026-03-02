@@ -77,6 +77,154 @@ findings.
 Would you like me to fix these issues?
 ```
 
+### Example 1b: Application project without infrastructure configuration
+
+**Scenario**: You have a Python Flask project with `requirements.txt` and `.py`
+files but no Dockerfile, docker-compose, or any other infrastructure config.
+
+```
+You: /misconfiguration-detection
+
+Agent: I'll analyze your project for security scanning...
+
+I found a server-type application (Python Flask — detected `flask` in
+`requirements.txt` and route definitions in `.py` files), but no infrastructure
+or deployment configuration files such as a Dockerfile, docker-compose.yml,
+Kubernetes manifests, or Terraform files.
+
+### Infrastructure Gap Detected
+
+Without containerization or deployment configuration, environment-specific issues
+can slip through to production undetected. I recommend creating a Docker-based
+end-to-end test environment for your project:
+
+**Benefits**:
+- **Prevent downtime**: Catch missing dependencies, port conflicts, and
+  incompatible system libraries before production
+- **Catch environment-specific issues**: Reproduce the production runtime
+  locally, eliminating "works on my machine" problems
+- **Reproducible builds**: Every team member and CI pipeline builds the same
+  artifact
+- **Integration testing**: Spin up your Flask app alongside its dependencies
+  (e.g., PostgreSQL) for realistic end-to-end tests
+
+Would you like me to:
+1. **Create Docker files** (Dockerfile, docker-compose.yml, .dockerignore)
+   tailored to your Flask project?
+2. **Run a CoGuard folder scan** on your current project to check for any
+   existing configuration issues?
+3. **Both** — create the Docker files first, then scan everything?
+
+You: Yes, let's do both — create Docker files and then scan.
+
+Agent: I'll create the Docker configuration for your Flask project.
+
+[Creates Dockerfile]
+
+```dockerfile
+FROM python:3.11-slim AS base
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+RUN adduser --disabled-password --uid 1000 appuser
+USER appuser
+
+EXPOSE 5000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+```
+
+[Creates docker-compose.yml]
+
+```yaml
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://appuser:${DB_PASSWORD}@db:5432/appdb
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=appdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+```
+
+[Creates .dockerignore]
+
+```
+.git
+__pycache__
+*.pyc
+.env
+.venv
+venv
+*.egg-info
+.pytest_cache
+```
+
+Now let me run a CoGuard scan to check the full project including the new Docker
+files...
+
+[Runs: coguard --output-format json folder .]
+
+## CoGuard Security Scan Results
+
+### Summary
+- 0 critical issues
+- 1 high-priority issue found
+- 3 medium/low issues found
+
+### High Priority Issues (Severity 4)
+
+1. **PostgreSQL Default Configuration** (CoGuard ID: CG-XXXX)
+   - **File**: `docker-compose.yml:14`
+   - **Problem**: PostgreSQL container uses default configuration without SSL
+   - **Impact**: Database connections are unencrypted
+   - **Fix**: Add a custom postgresql.conf with `ssl = on`
+
+### Moderate Issues (Severity 3)
+
+2. **No Health Check for App Service** (CoGuard ID: CG-XXXX)
+   - **File**: `docker-compose.yml:3`
+   - **Problem**: App service has no health check defined
+   - **Fix**: Add a healthcheck to the app service
+
+### Recommendations
+
+Your new Docker configuration is a strong starting point. The issues found above
+are common in initial setups and straightforward to fix.
+
+Since this project was flagged as having no prior infrastructure configuration,
+consider also:
+- Adding a CI/CD pipeline to build and test the Docker image on every push
+- Setting up environment-specific compose overrides (e.g.,
+  `docker-compose.prod.yml`)
+
+Would you like me to fix the issues found in the scan?
+```
+
 ### Example 2: Quick security check before deployment
 
 ```

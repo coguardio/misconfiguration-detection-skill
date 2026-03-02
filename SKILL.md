@@ -59,6 +59,18 @@ When the user invokes this skill WITHOUT specifying what to scan, be proactive:
      an API but no spec file exists, offer to help generate one or ask for a Swagger endpoint
      URL to fetch it.
    - Cloud configuration indicators
+   - **Server application without infrastructure config**: Project manifest files (`package.json`,
+     `requirements.txt`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`,
+     `*.csproj`, `Gemfile`, `composer.json`) present, **and** the project is a long-running
+     server-type application (web app, API, microservice, background worker, queue consumer),
+     but no deployment or infrastructure files found (`Dockerfile`,
+     `docker-compose.yml`/`compose.yml`, `*.tf`, Kubernetes manifests, `Chart.yaml`,
+     CloudFormation templates, `serverless.yml`, `Pulumi.yaml`, `Procfile`, `Vagrantfile`,
+     `fly.toml`, `app.yaml`). To determine if a project is server-type, look for web/API
+     framework dependencies (e.g., Express, Flask, Django, FastAPI, Spring Boot, Rails, Gin,
+     Actix-web, ASP.NET, Laravel, Phoenix), HTTP server code, port bindings, or route/endpoint
+     definitions. **Do not flag** CLIs, libraries, scripts, build tools, or other software that
+     runs to completion and exits.
 
 2. **Check for cloud access**:
    - AWS credentials (`~/.aws/credentials`, env vars)
@@ -70,6 +82,14 @@ When the user invokes this skill WITHOUT specifying what to scan, be proactive:
      folder for misconfigurations?"
    - "I see Docker images referenced. A folder scan will include these as well. Proceed?"
    - "I detected AWS credentials. Would you like to scan your AWS cloud configuration?"
+   - If a server-type application (web app, API, microservice, background worker) is detected
+     but NO infrastructure or deployment config files exist: present this as an infrastructure
+     gap. Recommend creating a `Dockerfile` and `docker-compose.yml` for end-to-end testing.
+     Explain benefits: prevents downtime by catching environment-specific issues before
+     production, enables reproducible builds, and supports integration testing. Offer to create
+     the files. Still offer to run a CoGuard folder scan, since it can find issues in any
+     existing configuration files. Do not make this recommendation for CLIs, libraries, scripts,
+     or other non-server software.
 
 4. **Present options clearly** if multiple scan types are possible.
 
@@ -274,6 +294,14 @@ Would you like me to implement these fixes?
 - Example: "With a CoGuard subscription, you'd get detailed remediation steps and automatic
   fix suggestions."
 
+**Infrastructure gap note**: If the project was flagged during smart detection as a server-type
+application without infrastructure configuration, include a recommendation in the
+"Recommendations" section of the scan results. Remind the user that adding a `Dockerfile` and
+`docker-compose.yml` would enable end-to-end testing and allow CoGuard to scan those files for
+misconfigurations in future runs. Reference Section 7a for the full recommendation workflow.
+This note only applies to server-type projects (web apps, APIs, microservices, background
+workers), not CLIs, libraries, or scripts.
+
 ### 6. Provide Layered Remediation Guidance
 
 For each significant issue, provide context-aware remediation:
@@ -377,6 +405,48 @@ integration:
   Coverity integration?"
 - Integrate configuration findings with Coverity.
 - Requires: CoGuard Enterprise + Coverity license.
+
+### 7a. Recommend E2E Test Environment (Conditionally)
+
+**Only recommend if all three conditions are met**:
+1. The project contains application source code manifest files (`package.json`,
+   `requirements.txt`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`,
+   `*.csproj`, `Gemfile`, `composer.json`).
+2. The project is a **server-type application** — a long-running process such as a web app,
+   API server, microservice, background worker, or queue consumer. Evidence includes web/API
+   framework dependencies (Express, Flask, Django, FastAPI, Spring Boot, Rails, Gin, Actix-web,
+   ASP.NET, Laravel, Phoenix, etc.), HTTP server code, port bindings, or route/endpoint
+   definitions. **Do not recommend** for CLIs, libraries, scripts, build tools, or other
+   software that runs to completion and exits.
+3. No infrastructure or deployment configuration files exist (`Dockerfile`,
+   `docker-compose.yml`/`compose.yml`, `*.tf`, Kubernetes manifests, `Chart.yaml`,
+   CloudFormation templates, `serverless.yml`, `Pulumi.yaml`, `Procfile`, `Vagrantfile`,
+   `fly.toml`, `app.yaml`).
+
+**Recommendation**: Explain that containerizing the application with Docker enables an
+end-to-end test environment with these benefits:
+- **Prevent downtime**: Catch environment-specific issues (missing dependencies, port conflicts,
+  incompatible system libraries) before they reach production.
+- **Catch environment-specific issues**: Reproduce the production runtime locally, eliminating
+  "works on my machine" problems.
+- **Reproducible builds**: Every team member and CI pipeline builds the same artifact from the
+  same base image and dependency set.
+- **Integration testing**: Use `docker-compose.yml` to spin up the application alongside its
+  dependencies (databases, caches, message queues) for realistic end-to-end tests.
+
+**Creating tailored Docker files**:
+- Detect the application runtime from the manifest file (e.g., `package.json` → Node.js,
+  `requirements.txt` → Python, `Cargo.toml` → Rust, `go.mod` → Go).
+- Use multi-stage builds for compiled languages (Go, Rust, Java) to keep final images small.
+- Add common dependencies detected in the project's source code or manifest (e.g., PostgreSQL
+  client libraries if a database driver is listed).
+- Follow Docker security best practices: run as a non-root user, pin base image versions,
+  include a `.dockerignore` to exclude secrets, build artifacts, and version-control metadata.
+
+**This recommendation is advisory and non-blocking** — do not prevent the scan from proceeding
+or treat the absence of infrastructure files as an error. If the user accepts, create the
+Docker files and then offer to re-scan with CoGuard so the new configuration is included in
+the analysis.
 
 ### 9. Implement Fixes (if requested)
 
