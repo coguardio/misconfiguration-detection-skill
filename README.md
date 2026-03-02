@@ -159,6 +159,7 @@ CoGuard analyzes configurations for:
 - CloudFormation
 - Ansible
 - Docker & Dockerfiles
+- ...
 
 ### Applications & Databases
 - NGINX, Apache, Tomcat
@@ -166,17 +167,22 @@ CoGuard analyzes configurations for:
 - Elasticsearch, Redis, Cassandra
 - Apache Kafka
 - Kerberos
+- ...
 
 ### Cloud Platforms
 - AWS
 - Azure
 - Google Cloud Platform
+- ...
 
 ### CI/CD & DevOps
 - Jenkins
 - GitHub Actions
 - BitBucket Pipelines
 - OpenTelemetry Collector
+- ...
+
+### And much more!!!
 
 ## Example Output
 
