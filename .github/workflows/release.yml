@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on master
+        run: |
+          if ! git merge-base --is-ancestor "${{ github.sha }}" origin/master; then
+            echo "Error: Tag must point to a commit on the master branch."
+            exit 1
+          fi
+
+      - name: Build ZIP
+        run: ./package.sh
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${{ github.ref_name }}" ../misconfiguration-detection.zip --generate-notes

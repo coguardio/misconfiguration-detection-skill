@@ -60,22 +60,24 @@ Or manually add it to your settings file:
 
 ### Option 2: Upload ZIP to claude.ai
 
+Download `misconfiguration-detection.zip` from the
+[latest release](https://github.com/coguardio/misconfiguration-detection-skill/releases/latest)
+and upload it to claude.ai via **Settings → Skills**.
+
+Alternatively, build the ZIP yourself:
+
 ```bash
-# Clone this repository
 git clone https://github.com/coguardio/misconfiguration-detection-skill.git
 cd misconfiguration-detection-skill
-
-# Package the skill (creates coguard.zip in parent directory)
 ./package.sh
-
-# Upload coguard.zip to claude.ai via Settings → Skills
+# Upload misconfiguration-detection.zip to claude.ai via Settings → Skills
 ```
 
-The packaging script creates a ZIP with the required structure:
+The ZIP has the following structure:
 
 ```
-coguard.zip
-└── coguard/
+misconfiguration-detection.zip
+└── misconfiguration-detection/
     ├── SKILL.md
     ├── README.md
     ├── EXAMPLES.md

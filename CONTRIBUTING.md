@@ -98,7 +98,7 @@ Here are areas where contributions are especially welcome:
 
    # Option C: Package and upload (for final verification)
    ./package.sh
-   # Upload coguard.zip to your coding agent's skill interface
+   # Upload misconfiguration-detection.zip to your coding agent's skill interface
    ```
 
    Test against a project directory on your machine that contains

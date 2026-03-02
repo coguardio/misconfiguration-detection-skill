@@ -7,14 +7,15 @@ set -e
 
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ./package.sh"
-    echo "Creates coguard.zip in the parent directory for upload to claude.ai"
+    echo "Creates misconfiguration-detection.zip in the parent directory for upload to claude.ai"
     exit 0
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
-TEMP_DIR="$PARENT_DIR/coguard"
-ZIP_FILE="$PARENT_DIR/coguard.zip"
+SKILL_NAME="misconfiguration-detection"
+TEMP_DIR="$PARENT_DIR/$SKILL_NAME"
+ZIP_FILE="$PARENT_DIR/$SKILL_NAME.zip"
 
 # Verify required files exist
 REQUIRED_FILES=(SKILL.md README.md EXAMPLES.md CONTRIBUTING.md LICENSE)
@@ -42,7 +43,7 @@ done
 # Create ZIP file
 echo "Creating ZIP file..."
 cd "$PARENT_DIR"
-zip -r coguard.zip coguard/
+zip -r "$SKILL_NAME.zip" "$SKILL_NAME/"
 
 # Clean up temp directory
 rm -rf "$TEMP_DIR"
