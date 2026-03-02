@@ -5,9 +5,17 @@ description: Scan infrastructure for security misconfigurations, interpret findi
 
 # CoGuard Infrastructure Security Scan
 
+**CoGuard CLI Version**: 0.3.10
+
 Scan user projects for security misconfigurations using the CoGuard CLI. Parse results. Present
 findings with CoGuard IDs, file paths, and line numbers. Offer remediation. Guide
 unauthenticated users through account creation before scanning.
+
+**IMPORTANT — CLI Syntax Compliance**: Always construct CoGuard commands by consulting the
+"CoGuard CLI Reference" section at the end of this document. All global options (those listed
+under `coguard --help`) MUST be placed BEFORE the subcommand. Subcommand-specific options go
+AFTER the subcommand. Never guess flag names or placement — use the exact syntax documented
+below.
 
 ## Capabilities
 
@@ -110,8 +118,17 @@ registration with proper security.
 
 ### 3. Execute Scan
 
-Run the CoGuard CLI with JSON output. The `--output-format` flag goes AFTER `coguard` and
-BEFORE the resource type:
+Run the CoGuard CLI with JSON output. **All global options** (`--output-format`,
+`--minimum-fail-level`, `--dry-run`, `--ruleset`, `--additional-scan-result`) MUST be placed
+AFTER `coguard` but BEFORE the subcommand. Subcommand-specific options (e.g., `--fix` for
+`folder`) go AFTER the subcommand. See the "CoGuard CLI Reference" section for the
+authoritative syntax.
+
+```bash
+coguard [global-options] <subcommand> [subcommand-options] [positional-args]
+```
+
+**Common scan commands**:
 
 ```bash
 coguard --output-format json folder <path>             # Directory (recursive, includes images)
@@ -128,10 +145,17 @@ Use `.` for current directory in folder scans.
 - Normal scans (folder, docker-image, docker-container): 15 minutes (900000ms)
 - Cloud scans: 30 minutes (1800000ms)
 
-**Optional parameters**:
-- `--ruleset=<framework>` — Sort findings by compliance framework (PCI-DSS, HIPAA, NIST)
-- `--dry-run=true` — Create a zip summarizing what would be uploaded to CoGuard back-end
-- `--minimum-fail-level=6` — Prevent non-zero exit on failed rules (levels 1–5 are severities)
+**Global options** (must go BEFORE the subcommand):
+- `--output-format json` — Output as JSON (can also be `formatted`, or multiple comma-separated)
+- `--minimum-fail-level 6` — Prevent non-zero exit on failed rules (levels 1–5 are severities)
+- `--ruleset soc2` — Sort findings by compliance framework (`soc2`, `hipaa`, `stig`)
+- `--dry-run true` — Create a zip summarizing what would be uploaded to CoGuard back-end
+- `--additional-scan-result trivy_cve_scan` — Include additional scan results
+
+**Example with multiple global options**:
+```bash
+coguard --output-format json --minimum-fail-level 6 folder /path/to/project
+```
 
 **Cloud scan considerations**:
 
@@ -159,7 +183,8 @@ If the user asks to scan an API:
 - Some scans process collected information: Helm charts → "Charts_Formatted.yaml", AWS CDK →
   `main.tf`, etc.
 - **Exit codes**: CoGuard exits with non-zero status when failed rules are detected. This is
-  normal behavior, not an error. Use `--minimum-fail-level=6` to suppress.
+  normal behavior, not an error. Use `--minimum-fail-level 6` (before the subcommand) to
+  suppress.
 - **Organization selection**: If multiple organizations are available, CoGuard prompts for
   selection. Present options to the user. Once selected, pipe the choice to stdin:
   ```bash
@@ -298,7 +323,7 @@ errors.
    or the user indicates they want to stop.
 
 **Enterprise feature hints** (mention when contextually relevant, not pushy):
-- When manual fixing is tedious: "Enterprise users can use `--fix=true` to automatically
+- When manual fixing is tedious: "Enterprise users can use `--fix true` to automatically
   remediate many issues."
 - When advanced features would help: "Team collaboration features help coordinate security
   fixes across your organization."
@@ -356,10 +381,10 @@ integration:
 ### 9. Implement Fixes (if requested)
 
 **For enterprise users with CoGuard fix feature**:
-1. Check if the user has enterprise access to `--fix=true`.
-2. **Before running `--fix=true`**, verify a change management system (e.g., Git) is enabled.
+1. Check if the user has enterprise access to `--fix true`.
+2. **Before running `--fix true`**, verify a change management system (e.g., Git) is enabled.
    If not, warn that changes will be made directly to files.
-3. Run: `coguard --output-format json folder . --fix=true`
+3. Run: `coguard --output-format json folder . --fix true`
 4. **USER_INSERT_VALUE placeholders**: The fix feature uses `USER_INSERT_VALUE` where user
    input is required. Review these and fill in appropriate values based on context and project
    requirements.
@@ -399,3 +424,157 @@ specific technology be added.
 
 Remember: Make infrastructure security accessible and actionable while naturally guiding users
 to discover the full value of CoGuard's platform and enterprise features.
+
+## CoGuard CLI Reference (v0.3.10)
+
+This section contains the authoritative CLI documentation extracted from `coguard-cli` version
+**0.3.10**. Always construct commands by referencing this section. If the CLI changes in a
+future version, this section must be updated accordingly — the CI/CD pipeline in
+`.github/workflows/check-coguard-version.yml` will fail when a new version is released as a
+reminder to update.
+
+### Main Command
+
+```
+usage: coguard [-h] [--coguard-api-url COGUARD_API_URL]
+               [--coguard-auth-url COGUARD_AUTH_URL]
+               [--logging-level LOGGING_LEVEL]
+               [--minimum-fail-level FAIL_LEVEL] [--dry-run DRY_RUN]
+               [--output-format OUTPUT_FORMAT] [--ruleset {soc2,hipaa,stig,}]
+               [--additional-scan-result {trivy_cve_scan,phpstan_sast_scan,}]
+               [-v]
+               {docker-image,docker-container,folder,repository,open-api,cloud,pipeline,account,scan} ...
+
+positional arguments:
+  {docker-image,docker-container,folder,repository,open-api,cloud,pipeline,account,scan}
+    docker-image        The sub-command to scan a Docker image
+    docker-container    The sub-command to scan a Docker container
+    folder              The sub-command to find configuration files within a folder and scan them.
+    repository          The sub-command to download a repository and scan configuration files within it.
+    open-api            The sub-command to download an OpenAPI spec and scan it directly.
+    cloud               The sub-command to extract a cloud snapshot as Terraform files and scan them.
+    pipeline            The sub-command to generate CI-CD-files to add to your pipeline.
+    account             The sub-command to obtain account information.
+    scan                The sub-command to scan everything, using default parameters.
+
+options:
+  -h, --help            show this help message and exit
+  --coguard-api-url COGUARD_API_URL
+                        The url of the coguard api to call
+  --coguard-auth-url COGUARD_AUTH_URL
+                        The url of the authentication server
+  --logging-level LOGGING_LEVEL
+                        The logging level of this call (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  --minimum-fail-level FAIL_LEVEL
+                        The minimum severity level of failed checks for this program to not
+                        give a non-zero exit code.
+  --dry-run DRY_RUN     When set to `true`, the CLI will generate a .zip file, but not upload
+                        it to the back-end for scanning/fixing.
+  --output-format OUTPUT_FORMAT
+                        The format of the output. Either `formatted` (default) or exported to
+                        other formats. Multiple formats can be concatenated via comma.
+  --ruleset {soc2,hipaa,stig,}
+                        The non-default rule-set to use.
+  --additional-scan-result {trivy_cve_scan,phpstan_sast_scan,}
+                        Additional scan result files or identifiers
+  -v, --version         show program's version number and exit
+```
+
+### Subcommand: folder
+
+```
+usage: coguard folder [-h] [--fix FIX_FLAG] [scan] [folder_name]
+
+positional arguments:
+  scan            The indicator that we are aiming to do a scan.
+  folder_name     The path to the folder. Defaults to the current working directory.
+
+options:
+  --fix FIX_FLAG  Upload the configuration files inside this folder and retrieve a fixed version.
+```
+
+### Subcommand: docker-image
+
+```
+usage: coguard docker-image [-h] [scan] [image_name]
+
+positional arguments:
+  scan        The indicator that we are aiming to do a scan.
+  image_name  The name/id of the image. Defaults to empty string (all images scanned).
+```
+
+### Subcommand: docker-container
+
+```
+usage: coguard docker-container [-h] [scan] [container_name]
+
+positional arguments:
+  scan            The indicator that we are aiming to do a scan.
+  container_name  The name/id of the container. Defaults to empty string (all containers scanned).
+```
+
+### Subcommand: cloud
+
+```
+usage: coguard cloud [-h] [--credentials-file CREDENTIALS_FILE]
+                     [{aws,gcp,azure,scan,}] [cloud_provider_name]
+
+positional arguments:
+  {aws,gcp,azure,scan,}
+                        The indicator that we are aiming to do a scan.
+  cloud_provider_name   The name of the cloud provider ("gcp", "aws", "azure"). Defaults to "aws".
+
+options:
+  --credentials-file CREDENTIALS_FILE
+                        A credentials file, if it is available.
+```
+
+### Subcommand: open-api
+
+```
+usage: coguard open-api [-h] [scan] [open_api_url]
+
+positional arguments:
+  scan          The indicator that we are aiming to do a scan.
+  open_api_url  The url to the OpenAPI JSON.
+```
+
+### Subcommand: repository
+
+```
+usage: coguard repository [-h] [scan] [repo_url]
+
+positional arguments:
+  scan        The indicator that we are aiming to do a scan.
+  repo_url    The url of the repository.
+```
+
+### Subcommand: pipeline
+
+```
+usage: coguard pipeline [-h] [ci_cd_provider_name] [ci_cd_command] [repository_folder]
+
+positional arguments:
+  ci_cd_provider_name  The name of the CI/CD provider.
+  ci_cd_command        The action you would like to take.
+  repository_folder    The repository folder.
+```
+
+### Subcommand: account
+
+```
+usage: coguard account [-h] [account_action] [cluster_name] [download_location]
+
+positional arguments:
+  account_action     The account action you would like to perform.
+  cluster_name       The cluster name.
+  download_location  The download location.
+```
+
+### Subcommand: scan
+
+```
+usage: coguard scan [-h]
+
+Scan everything using default parameters.
+```

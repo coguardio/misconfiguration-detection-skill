@@ -1,14 +1,13 @@
-name: Check CoGuard Version
+name: Check CoGuard CLI Version
 
 on:
   schedule:
     # Run weekly on Mondays at 9 AM UTC
     - cron: '0 9 * * 1'
-  workflow_dispatch:  # Allow manual triggers
+  workflow_dispatch: # Allow manual triggers
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   check-version:
@@ -22,42 +21,52 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Get latest CoGuard version
+      - name: Extract pinned version from SKILL.md
+        id: pinned_version
+        run: |
+          PINNED=$(grep -oP '^\*\*CoGuard CLI Version\*\*: \K[0-9]+\.[0-9]+\.[0-9]+' SKILL.md)
+          if [ -z "$PINNED" ]; then
+            echo "ERROR: Could not extract pinned version from SKILL.md"
+            echo "Expected a line like: **CoGuard CLI Version**: X.Y.Z"
+            exit 1
+          fi
+          echo "version=$PINNED" >> $GITHUB_OUTPUT
+          echo "Pinned CoGuard CLI version in SKILL.md: $PINNED"
+
+      - name: Get latest CoGuard version from PyPI
         id: latest_version
         run: |
           LATEST=$(pip index versions coguard-cli 2>/dev/null | \
-            grep -oP 'Available versions: \K[0-9]+\.[0-9]+\.[0-9]+' | \
+            grep -oP 'coguard-cli \(\K[0-9]+\.[0-9]+\.[0-9]+' | \
             head -1)
+          if [ -z "$LATEST" ]; then
+            echo "ERROR: Could not determine latest version from PyPI"
+            exit 1
+          fi
           echo "version=$LATEST" >> $GITHUB_OUTPUT
-          echo "Latest CoGuard version: $LATEST"
+          echo "Latest CoGuard CLI version on PyPI: $LATEST"
 
-      - name: Create issue if new version detected
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const latest = '${{ steps.latest_version.outputs.version }}';
-            if (!latest) {
-              console.log('Could not determine latest version, skipping.');
-              return;
-            }
-
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'version-update',
-              state: 'open'
-            });
-
-            const existing = issues.data.find(i => i.title.includes(latest));
-            if (!existing) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: `CoGuard CLI ${latest} released — review docs`,
-                body: `A new version of coguard-cli (\`${latest}\`) is available on PyPI.\n\nReview documentation and examples for accuracy.`,
-                labels: ['version-update']
-              });
-              console.log(`Created issue for version ${latest}`);
-            } else {
-              console.log(`Issue already exists for version ${latest}`);
-            }
+      - name: Compare versions
+        run: |
+          PINNED="${{ steps.pinned_version.outputs.version }}"
+          LATEST="${{ steps.latest_version.outputs.version }}"
+          echo "Pinned in SKILL.md: $PINNED"
+          echo "Latest on PyPI:     $LATEST"
+          if [ "$PINNED" != "$LATEST" ]; then
+            echo ""
+            echo "=========================================="
+            echo "  VERSION MISMATCH DETECTED"
+            echo "=========================================="
+            echo ""
+            echo "The CoGuard CLI has been updated from $PINNED to $LATEST."
+            echo ""
+            echo "Action required:"
+            echo "  1. Install the new version: pip3 install coguard-cli==$LATEST"
+            echo "  2. Run: coguard --help (and all subcommand --help)"
+            echo "  3. Update the 'CoGuard CLI Reference' section in SKILL.md"
+            echo "  4. Update the '**CoGuard CLI Version**' line in SKILL.md to $LATEST"
+            echo "  5. Verify all examples still use correct flag syntax"
+            echo ""
+            exit 1
+          fi
+          echo "Versions match. SKILL.md is up to date."
