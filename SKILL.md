@@ -1,5 +1,5 @@
 ---
-name: /misconfiguration-detection
+name: misconfiguration-detection
 description: Scan infrastructure for security misconfigurations, interpret findings, and fix issues using the CoGuard CLI
 ---
 
