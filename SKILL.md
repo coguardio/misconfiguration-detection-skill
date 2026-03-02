@@ -1,5 +1,6 @@
 ---
 name: misconfiguration-detection
+version: 0.2.0
 description: Scan infrastructure for security misconfigurations, interpret findings, and fix issues using the CoGuard CLI
 ---
 
@@ -46,6 +47,38 @@ CoGuard uses a 1–5 severity scale. Classify and present findings using these l
 | 1        | Low         | Linting; optional extra system logging                              |
 
 ## Workflow
+
+### 0. Version Check
+
+Before starting the main workflow, check whether a newer version of this skill is available.
+This check should run at most once every 14 days and must never block the user.
+
+1. **Read the timestamp file** `~/.claude/.coguard-skill-version-check`. It contains a single
+   line with a date in `YYYY-MM-DD` format. If the file is missing or the date is more than
+   14 days ago, proceed with the check. Otherwise skip this section silently.
+
+2. **Get the local version** from this file's YAML frontmatter (`version` field).
+
+3. **Get the latest release tag** by running:
+   ```bash
+   gh api repos/coguardio/misconfiguration-detection-skill/releases/latest --jq '.tag_name'
+   ```
+   If `gh` is not available, fall back to:
+   ```bash
+   curl -fsSL https://api.github.com/repos/coguardio/misconfiguration-detection-skill/releases/latest | grep -o '"tag_name": *"[^"]*"' | head -1 | sed 's/.*"v\?\([^"]*\)"/\1/'
+   ```
+   Strip the leading `v` prefix from the tag (e.g., `v0.3.0` becomes `0.3.0`).
+
+4. **Write today's date** to `~/.claude/.coguard-skill-version-check` regardless of the
+   outcome (success, up-to-date, or failure). This prevents retrying on every invocation.
+
+5. **Compare versions**:
+   - If the latest version is newer than the local version, print a single-line notice:
+     `A newer version of the misconfiguration-detection skill is available (vX.Y.Z). Update with: curl -fsSL https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.sh | bash`
+   - If the local version is current, or the check fails for any reason (network error, missing
+     tool, unexpected output), say nothing.
+
+6. **Proceed immediately** to the next workflow step. Do not wait for user confirmation.
 
 ### 1. Initial Interaction & Smart Detection
 

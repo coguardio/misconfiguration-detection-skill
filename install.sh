@@ -25,9 +25,13 @@ trap 'rm -rf "$TMPDIR"' EXIT
 curl -fsSL "$ZIP_URL" -o "$TMPDIR/skill.zip"
 unzip -qo "$TMPDIR/skill.zip" -d "$TMPDIR"
 
-# Install into the skills directory
+# Install into the skills directory (clean first so stale files don't linger)
+rm -rf "$SKILL_DIR"
 mkdir -p "$SKILL_DIR"
 cp -r "$TMPDIR/misconfiguration-detection/"* "$SKILL_DIR/"
+
+# Record install date so the skill doesn't check for updates right away
+date +%Y-%m-%d > "$HOME/.claude/.coguard-skill-version-check"
 
 echo ""
 echo "Installed to $SKILL_DIR"

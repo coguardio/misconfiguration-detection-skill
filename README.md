@@ -95,6 +95,18 @@ What skills are available?
 You should see `misconfiguration-detection` in the list. You can also invoke it
 directly with `/misconfiguration-detection`.
 
+### Automatic Update Notifications
+
+The skill checks for newer versions approximately every two weeks. If an update is
+available, you'll see a one-line notice with the update command when you next invoke
+the skill. The check is non-blocking and silent when you're already up to date.
+
+To update manually at any time:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.sh | bash
+```
+
 ## Usage
 
 Once installed, invoke the skill in any project directory:

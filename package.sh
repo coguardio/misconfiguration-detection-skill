@@ -26,6 +26,12 @@ for f in "${REQUIRED_FILES[@]}"; do
     fi
 done
 
+# Verify SKILL.md contains a version field in the frontmatter
+if ! grep -qE '^version: [0-9]+\.[0-9]+\.[0-9]+' "$SCRIPT_DIR/SKILL.md"; then
+    echo "Error: SKILL.md frontmatter is missing a 'version: X.Y.Z' field"
+    exit 1
+fi
+
 echo "Packaging CoGuard skill..."
 
 # Clean up any existing temp directory or ZIP file

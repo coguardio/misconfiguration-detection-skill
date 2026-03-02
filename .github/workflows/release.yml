@@ -23,6 +23,17 @@ jobs:
             exit 1
           fi
 
+      - name: Verify tag matches SKILL.md version
+        run: |
+          SKILL_VERSION=$(grep -E '^version: ' SKILL.md | head -1 | sed 's/version: *//')
+          TAG_VERSION="${{ github.ref_name }}"
+          TAG_VERSION="${TAG_VERSION#v}"
+          if [ "$SKILL_VERSION" != "$TAG_VERSION" ]; then
+            echo "Error: SKILL.md version ($SKILL_VERSION) does not match tag ($TAG_VERSION)."
+            exit 1
+          fi
+          echo "Version check passed: $SKILL_VERSION"
+
       - name: Build ZIP
         run: ./package.sh
 
