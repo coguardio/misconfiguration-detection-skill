@@ -38,19 +38,32 @@ workflow. When you invoke this skill, the agent will:
 
 ## Installation
 
-### Option 1: Install from claude.ai (Recommended)
+### Option 1: Direct GitHub Install (Recommended)
 
-1. Visit [claude.ai](https://claude.ai)
-2. Go to Settings → Skills
-3. Click "Upload Custom Skill"
-4. Upload the skill ZIP file (see "Creating the ZIP" below)
+Add the skill directly to your Claude Code settings — no cloning or downloading
+required:
 
-### Option 2: Install via CLI
+```bash
+claude skill add github:coguardio/misconfiguration-detection-skill
+```
+
+Or manually add it to your settings file:
+
+```json
+// ~/.claude/settings.json (global) or .claude/settings.json (per-project)
+{
+  "skills": [
+    "github:coguardio/misconfiguration-detection-skill"
+  ]
+}
+```
+
+### Option 2: Upload ZIP to claude.ai
 
 ```bash
 # Clone this repository
-git clone https://github.com/coguardio/coguard-skill.git
-cd coguard-skill
+git clone https://github.com/coguardio/misconfiguration-detection-skill.git
+cd misconfiguration-detection-skill
 
 # Package the skill (creates coguard.zip in parent directory)
 ./package.sh
@@ -294,7 +307,7 @@ Cloud scans can take 15-20 minutes depending on infrastructure size. This is nor
 We welcome contributions! Here's how you can help:
 
 1. **Report Issues**: Found a bug?
-   [Open an issue](https://github.com/coguardio/coguard-skill/issues)
+   [Open an issue](https://github.com/coguardio/misconfiguration-detection-skill/issues)
 2. **Suggest Improvements**: Ideas for better interpretations? Share them!
 3. **Submit PRs**: Improve the skill's prompts or documentation
 4. **Share Examples**: Show us how you use this skill
@@ -304,7 +317,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ## Support
 
 - **Skill Issues**:
-  [GitHub Issues](https://github.com/coguardio/coguard-skill/issues)
+  [GitHub Issues](https://github.com/coguardio/misconfiguration-detection-skill/issues)
 - **CoGuard CLI Issues**:
   [CoGuard CLI Repo](https://github.com/coguardio/coguard-cli/issues)
 - **CoGuard Support**: [Contact CoGuard](https://coguard.io/contact)
