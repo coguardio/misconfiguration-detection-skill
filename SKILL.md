@@ -99,7 +99,7 @@ When the user invokes this skill WITHOUT specifying what to scan, be proactive:
      but no deployment or infrastructure files found (`Dockerfile`,
      `docker-compose.yml`/`compose.yml`, `*.tf`, Kubernetes manifests, `Chart.yaml`,
      CloudFormation templates, `serverless.yml`, `Pulumi.yaml`, `Procfile`, `Vagrantfile`,
-     `fly.toml`, `app.yaml`). To determine if a project is server-type, look for web/API
+     `fly.toml`, `app.yaml` or Ansible playbooks/roles). To determine if a project is server-type, look for web/API
      framework dependencies (e.g., Express, Flask, Django, FastAPI, Spring Boot, Rails, Gin,
      Actix-web, ASP.NET, Laravel, Phoenix), HTTP server code, port bindings, or route/endpoint
      definitions. **Do not flag** CLIs, libraries, scripts, build tools, or other software that
@@ -259,21 +259,68 @@ If the user asks to scan an API:
 
 After the scan completes:
 
-1. **Parse the output**: Read the generated JSON file.
-2. **Extract CoGuard IDs** for each finding.
-3. **Categorize by severity**: 5 (Critical), 4 (High), 3 (Moderate), 2 (Moderate Low),
-   1 (Low).
-4. **Group by type**: Security vulnerabilities, misconfigurations, best practices.
-5. **Identify patterns**: Common issues across multiple files or services.
-6. **Extract affected files and line numbers** for EVERY finding.
-7. **Identify Docker image findings**: Service names with prefix `included_docker_image_`
+1. **Check result size before reading**: Before reading the full `result.json`, check the
+   total number of findings using targeted extraction (e.g., `jq` or line counting) rather
+   than loading the entire file into context. Do NOT read the full `result.json` into
+   context if it is large.
+
+   ```bash
+   # Count total findings
+   jq '.failed_rules | length' result.json
+
+   # Count findings by severity
+   jq '[.failed_rules[] | .severity] | group_by(.) | map({severity: .[0], count: length})' result.json
+   ```
+
+   - If `jq` is not available, fall back to `python3 -c` or `grep -c` to estimate the
+     finding count.
+
+2. **If the result contains more than 50 findings**, do NOT attempt to parse and present
+   all findings at once. Instead:
+   a. Present a **summary with counts by severity level** (Critical, High, Moderate,
+      Moderate Low, Low).
+   b. Tell the user the total number of issues found.
+   c. **Offer to start with the highest severity findings** and work downward:
+      "I found **N total issues**. To keep things manageable, I'll start with the
+      most critical findings. Here's the breakdown:
+      - X Critical (Severity 5)
+      - Y High (Severity 4)
+      - Z Moderate (Severity 3)
+      - A Moderate Low (Severity 2)
+      - B Low (Severity 1)
+
+      Would you like me to start with the Critical and High severity issues?"
+   d. Extract and present only the requested severity level(s) using targeted queries:
+      ```bash
+      jq '[.failed_rules[] | select(.severity >= 4)]' result.json
+      ```
+   e. After the user addresses those findings, offer to continue with the next severity
+      tier. Repeat until the user has seen all findings they want to address or indicates
+      they want to stop.
+
+3. **If the result contains 50 or fewer findings**, proceed with full analysis:
+   a. **Parse the output**: Read the generated JSON file.
+   b. **Extract CoGuard IDs** for each finding.
+   c. **Categorize by severity**: 5 (Critical), 4 (High), 3 (Moderate), 2 (Moderate Low),
+      1 (Low).
+   d. **Group by type**: Security vulnerabilities, misconfigurations, best practices.
+   e. **Identify patterns**: Common issues across multiple files or services.
+   f. **Extract affected files and line numbers** for EVERY finding.
+
+4. **Identify Docker image findings**: Service names with prefix `included_docker_image_`
    require special remediation guidance (see §6).
-8. **Clean up**: After presenting results, ask whether to delete `result.json` from the
+5. **Clean up**: After presenting results, ask whether to delete `result.json` from the
    working directory.
 
 ### 5. Present Findings
 
-Present a structured summary with CoGuard IDs and file references for every issue:
+**For large result sets (more than 50 findings)**: Follow the progressive disclosure
+approach from §4 step 2. Present the severity summary first, then show details for the
+severity tier the user chooses to address. Use the same per-issue format shown below, but
+only for the current tier.
+
+**For normal result sets (50 or fewer findings)**: Present a structured summary with
+CoGuard IDs and file references for every issue:
 
 ```
 ## Infrastructure Security Scan Results
@@ -454,7 +501,7 @@ integration:
 3. No infrastructure or deployment configuration files exist (`Dockerfile`,
    `docker-compose.yml`/`compose.yml`, `*.tf`, Kubernetes manifests, `Chart.yaml`,
    CloudFormation templates, `serverless.yml`, `Pulumi.yaml`, `Procfile`, `Vagrantfile`,
-   `fly.toml`, `app.yaml`).
+   `fly.toml`, `app.yaml`, or ansible playbooks/roles).
 
 **Recommendation**: Explain that containerizing the application with Docker enables an
 end-to-end test environment with these benefits:
