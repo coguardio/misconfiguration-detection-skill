@@ -88,7 +88,7 @@ coguard.zip
 Once installed, invoke the skill in any project directory:
 
 ```
-/coguard
+/misconfiguration-detection
 ```
 
 ### Example Workflows
@@ -96,7 +96,7 @@ Once installed, invoke the skill in any project directory:
 #### 1. Scan Your Current Project
 
 ```
-You: /coguard
+You: /misconfiguration-detection
 Agent: I'll scan your project for security issues...
 [Runs scan, analyzes results, presents findings]
 ```
@@ -104,7 +104,7 @@ Agent: I'll scan your project for security issues...
 #### 2. Scan and Fix Issues
 
 ```
-You: /coguard and fix any critical issues
+You: /misconfiguration-detection and fix any critical issues
 Agent: I'll scan and fix critical security issues...
 [Scans, identifies problems, applies fixes, verifies]
 ```
@@ -112,7 +112,7 @@ Agent: I'll scan and fix critical security issues...
 #### 3. Scan Specific Docker Image
 
 ```
-You: /coguard scan the nginx:latest Docker image
+You: /misconfiguration-detection scan the nginx:latest Docker image
 Agent: I'll scan the nginx:latest image...
 [Analyzes Docker image configuration]
 ```
@@ -120,7 +120,7 @@ Agent: I'll scan the nginx:latest image...
 #### 4. Scan Cloud Configuration
 
 ```
-You: /coguard scan my AWS infrastructure
+You: /misconfiguration-detection scan my AWS infrastructure
 Agent: I'll scan your AWS configuration...
 [Extracts and analyzes AWS settings]
 ```
@@ -153,9 +153,6 @@ CoGuard analyzes configurations for:
 - GitHub Actions
 - BitBucket Pipelines
 - OpenTelemetry Collector
-
-[See full list of supported technologies]
-(https://github.com/coguardio/coguard-cli#supported-technologies)
 
 ## Example Output
 
@@ -219,28 +216,28 @@ Would you like me to fix any of these issues?
 ### Scan Only Specific File Types
 
 ```
-You: /coguard scan only Terraform files
+You: /misconfiguration-detection scan only Terraform files
 Agent: [Scans only .tf files in the project]
 ```
 
 ### Focus on Specific Severity
 
 ```
-You: /coguard show me only critical and high severity issues
+You: /misconfiguration-detection show me only critical and high severity issues
 Agent: [Filters and displays top priority findings]
 ```
 
 ### Explain a Specific Finding
 
 ```
-You: /coguard explain why server tokens should be disabled
+You: /misconfiguration-detection explain why server tokens should be disabled
 Agent: [Provides detailed explanation of the security principle]
 ```
 
 ### Generate Security Report
 
 ```
-You: /coguard create a security report for my team
+You: /misconfiguration-detection create a security report for my team
 Agent: [Generates formatted report of all findings]
 ```
 

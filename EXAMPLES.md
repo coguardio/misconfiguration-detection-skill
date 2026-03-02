@@ -21,7 +21,7 @@ scenarios.
 check for security issues.
 
 ```
-You: /coguard
+You: /misconfiguration-detection
 
 Agent: I'll scan your project for security issues...
 
@@ -107,7 +107,7 @@ these findings?
 ### Example 3: Scanning a third-party Docker image
 
 ```
-You: /coguard scan the postgres:14 image I'm planning to use
+You: /misconfiguration-detection scan the postgres:14 image I'm planning to use
 
 Agent: I'll scan the postgres:14 Docker image for security issues...
 
@@ -248,7 +248,7 @@ This pattern works for any Docker image - NGINX, Redis, MongoDB, etc.
 ### Example 3c: Recursive Scanning of Kubernetes Manifests
 
 ```
-You: /coguard scan my Kubernetes deployment
+You: /misconfiguration-detection scan my Kubernetes deployment
 
 Agent: I'll scan your Kubernetes configurations. Note that CoGuard performs
 recursive scans, which means it will also analyze any Docker images referenced in
@@ -368,7 +368,7 @@ well?
 ### Example 4: Terraform security audit
 
 ```
-You: /coguard review my Terraform configs for AWS
+You: /misconfiguration-detection review my Terraform configs for AWS
 
 Agent: I'll analyze your Terraform configurations for AWS security best
 practices...
@@ -431,7 +431,7 @@ Should I go through each of these and explain the fixes in detail?
 ### Example 5: AWS infrastructure review
 
 ```
-You: /coguard scan my AWS infrastructure
+You: /misconfiguration-detection scan my AWS infrastructure
 
 Agent: I'll extract and scan your current AWS configuration. This may take 2-3
 minutes...
@@ -496,7 +496,7 @@ This is a comprehensive report. Would you like me to:
 ### Example 6: Automated remediation
 
 ```
-You: /coguard scan and fix all critical issues
+You: /misconfiguration-detection scan and fix all critical issues
 
 Agent: I'll scan your project and fix critical security issues...
 
@@ -571,7 +571,7 @@ Would you like me to address the high-priority issues as well?
 ### Example 6b: Enterprise Auto-Fix Feature
 
 ```
-You: /coguard scan and fix all issues automatically
+You: /misconfiguration-detection scan and fix all issues automatically
 
 Agent: I'll check if you have access to the enterprise fix feature...
 
@@ -656,7 +656,7 @@ addressed.
 ### Example 7: Learning about security best practices
 
 ```
-You: /coguard I want to learn about securing my PostgreSQL database. Can you scan
+You: /misconfiguration-detection I want to learn about securing my PostgreSQL database. Can you scan
 it and explain?
 
 Agent: Great question! Let me scan your PostgreSQL configuration and walk you
@@ -737,7 +737,7 @@ Want me to generate a secure postgresql.conf with all these settings?
 ### Example 8: Security report for team review
 
 ```
-You: /coguard create a security report I can share with my team
+You: /misconfiguration-detection create a security report I can share with my team
 
 Agent: I'll generate a comprehensive security report suitable for team review...
 
@@ -825,7 +825,7 @@ I've created a detailed report. Would you like me to also:
 ### Example 9: Continuous security integration
 
 ```
-You: /coguard set up continuous security scanning in CI/CD
+You: /misconfiguration-detection set up continuous security scanning in CI/CD
 
 Agent: I'll help you integrate CoGuard into your CI/CD pipeline...
 
