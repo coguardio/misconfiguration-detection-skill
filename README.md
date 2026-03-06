@@ -42,8 +42,16 @@ workflow. When you invoke this skill, the agent will:
 
 Run this one-liner to install the skill for all your projects:
 
+**macOS / Linux:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.ps1 | iex
 ```
 
 That's it — restart Claude Code and type `/misconfiguration-detection`.
@@ -101,11 +109,8 @@ The skill checks for newer versions approximately every two weeks. If an update 
 available, you'll see a one-line notice with the update command when you next invoke
 the skill. The check is non-blocking and silent when you're already up to date.
 
-To update manually at any time:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/coguardio/misconfiguration-detection-skill/master/install.sh | bash
-```
+To update manually at any time, re-run the install command for your platform
+(see [Quick Start](#quick-start)).
 
 ## Usage
 
